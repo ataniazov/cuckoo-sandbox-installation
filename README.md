@@ -45,7 +45,6 @@ make && make check
 make install
 
 yara -v
-
 ```
 
 #### yara-python
@@ -105,7 +104,70 @@ pip show pydeep
 cd ..
 ```
 
+### mitmproxy
+
+```
+wget -qO- https://snapshots.mitmproxy.org/4.0.3/mitmproxy-4.0.3-linux.tar.gz | tar -zxf - -C mitmproxy --strip-components 1
+```
+
+### tcpdump
+
+```
+sudo apt install tcpdump apparmor-utils
+sudo aa-disable /usr/sbin/tcpdump
+sudo setcap cap_net_raw,cap_net_admin=eip /usr/sbin/tcpdump
+
+getcap /usr/sbin/tcpdump
+
+#sudo apt install libcap2-bin
+#sudo chmod +s /usr/sbin/tcpdump
+```
+
+### Volatility
+
+```
+wget -q http://downloads.volatilityfoundation.org/releases/2.6/volatility_2.6_lin64_standalone.zip
+unzip volatility_2.6_lin64_standalone.zip
+```
+
+### M2Crypto
+
+```
+sudo apt install swig
+
+pip install m2crypto
+#pip install m2crypto==0.24.0
+```
+### guacd
+
+```
+sudo apt install libguac-client-rdp0 libguac-client-vnc0 libguac-client-ssh0 guacd
+```
+
+## Virtualbox
+
+### apt
+
+```
+sudo apt install virtualbox virtualbox-ext-pack
+```
+
+### Manual
+```
+sudo add-apt-repository "https://download.virtualbox.org/virtualbox/debian bionic contrib"
+
+wget -q https://www.virtualbox.org/download/oracle_vbox_2016.asc -O- | sudo apt-key add -
+wget -q https://www.virtualbox.org/download/oracle_vbox.asc -O- | sudo apt-key add -
+
+sudo apt update
+sudo apt install virtualbox-5.2
+```
+
 ## Cuckoo installation
 
 ```
+sudo adduser cuckoo
+
+pip install -U pip setuptools
+pip install -U cuckoo
 ```

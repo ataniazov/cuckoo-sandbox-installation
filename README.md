@@ -125,6 +125,8 @@ getcap /usr/sbin/tcpdump
 
 ### Volatility
 
+Volatility is an optional tool to do forensic analysis on memory dumps. In combination with Cuckoo, it can automatically provide additional visibility into deep modifications in the operating system as well as detect the presence of rootkit technology that escaped the monitoring domain of Cuckoo’s analyzer.
+
 ```
 wget -q http://downloads.volatilityfoundation.org/releases/2.6/volatility_2.6_lin64_standalone.zip
 unzip volatility_2.6_lin64_standalone.zip
@@ -166,8 +168,65 @@ sudo apt install virtualbox-5.2
 ## Cuckoo installation
 
 ```
-sudo adduser cuckoo
-
 pip install -U pip setuptools
 pip install -U cuckoo
+```
+
+## Cuckoo Configurations
+
+### create cuckoo user (optional)
+
+```
+sudo adduser cuckoo
+sudo usermod -a -G vboxusers cuckoo
+#sudo usermod -a -G libvirtd cuckoo
+```
+
+### Increase “Open Files Limit”
+
+/etc/sysctl.conf
+
+```
+fs.file-max = 2097152
+
+sysctl -p
+```
+
+### Cuckoo Working Directory (CWD)
+
+```
+```
+
+### Simple Global Routing
+
+```
+sudo iptables -t nat -A POSTROUTING -o enp3s0 -s 192.168.56.0/24 -j MASQUERADE
+
+# Default drop.
+sudo iptables -P FORWARD DROP
+
+# Existing connections.
+sudo iptables -A FORWARD -m state --state RELATED,ESTABLISHED -j ACCEPT
+
+# Accept connections from vboxnet to the whole internet.
+sudo iptables -A FORWARD -s 192.168.56.0/24 -j ACCEPT
+
+# Internal traffic.
+sudo iptables -A FORWARD -s 192.168.56.0/24 -d 192.168.56.0/24 -j ACCEPT
+
+# Log stuff that reaches this point (could be noisy).
+sudo iptables -A FORWARD -j LOG
+```
+
+#### packet forwarding
+
+```
+echo 1 | sudo tee -a /proc/sys/net/ipv4/ip_forward
+sudo sysctl -w net.ipv4.ip_forward=1
+```
+
+## Installing the Linux host
+
+```
+sudo apt install uml-utilities bridge-utils
 ```

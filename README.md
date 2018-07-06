@@ -130,6 +130,15 @@ Volatility is an optional tool to do forensic analysis on memory dumps. In combi
 ```
 wget -q http://downloads.volatilityfoundation.org/releases/2.6/volatility_2.6_lin64_standalone.zip
 unzip volatility_2.6_lin64_standalone.zip
+
+sudo apt install pcregrep libpcre++-dev python-dev
+
+git clone https://github.com/volatilityfoundation/volatility.git
+
+cd volatility
+
+python setup.py install --user
+
 ```
 
 ### M2Crypto
@@ -195,6 +204,12 @@ sysctl -p
 ### Cuckoo Working Directory (CWD)
 
 ```
+auxiliary.conf
+cuckoo.conf
+memory.conf
+processing.conf
+reporting.conf
+virtualbox.conf
 ```
 
 ### Simple Global Routing
@@ -229,4 +244,34 @@ sudo sysctl -w net.ipv4.ip_forward=1
 
 ```
 sudo apt install uml-utilities bridge-utils
+```
+
+## Sandbox
+
+### OS
+
+```
+Windows 7 SP1 Professional
+
+```
+
+### Software
+
+```
+Cuckoo agent
+Google Chrome
+Adobe Reader
+Microsoft Office 2010
+Adobe Flash
+Java JRE
+.Net Framework
+```
+
+### Settings
+
+```
+Disable UAC
+Disable Firewall
+Disable Auto-Update for Windows and all installed software
+Change network settings (Static IP address and private DNS server) 
 ```

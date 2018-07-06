@@ -123,24 +123,6 @@ getcap /usr/sbin/tcpdump
 #sudo chmod +s /usr/sbin/tcpdump
 ```
 
-### Volatility
-
-Volatility is an optional tool to do forensic analysis on memory dumps. In combination with Cuckoo, it can automatically provide additional visibility into deep modifications in the operating system as well as detect the presence of rootkit technology that escaped the monitoring domain of Cuckoo’s analyzer.
-
-```
-wget -q http://downloads.volatilityfoundation.org/releases/2.6/volatility_2.6_lin64_standalone.zip
-unzip volatility_2.6_lin64_standalone.zip
-
-sudo apt install pcregrep libpcre++-dev python-dev
-
-git clone https://github.com/volatilityfoundation/volatility.git
-
-cd volatility
-
-python setup.py install --user
-
-```
-
 ### M2Crypto
 
 ```
@@ -149,10 +131,45 @@ sudo apt install swig
 pip install m2crypto
 #pip install m2crypto==0.24.0
 ```
+
+### WeasyPrint
+
+```
+pip install weasyprint --user
+```
+
 ### guacd
 
 ```
 sudo apt install libguac-client-rdp0 libguac-client-vnc0 libguac-client-ssh0 guacd
+```
+
+### Volatility
+
+Volatility is an optional tool to do forensic analysis on memory dumps. In combination with Cuckoo, it can automatically provide additional visibility into deep modifications in the operating system as well as detect the presence of rootkit technology that escaped the monitoring domain of Cuckoo’s analyzer.
+
+```
+sudo apt install pcregrep libpcre++-dev python-dev
+
+pip install distorm3
+pip install pycrypto
+pip install pillow
+pip install openpyxl
+pip install ujson
+
+pip install pytz
+
+
+git clone https://github.com/volatilityfoundation/volatility.git
+
+cd volatility
+
+python setup.py build
+python setup.py install --user
+
+python vol.py -h
+
+cd ..
 ```
 
 ## Virtualbox
@@ -177,6 +194,8 @@ sudo apt install virtualbox-5.2
 ## Cuckoo installation
 
 ```
+virtualenv venv
+. venv/bin/activate
 pip install -U pip setuptools
 pip install -U cuckoo
 ```
@@ -258,7 +277,7 @@ Windows 7 SP1 Professional
 ### Software
 
 ```
-Cuckoo agent
+Python with PIL & Cuckoo agent
 Google Chrome
 Adobe Reader
 Microsoft Office 2010
@@ -274,4 +293,14 @@ Disable UAC
 Disable Firewall
 Disable Auto-Update for Windows and all installed software
 Change network settings (Static IP address and private DNS server) 
+```
+
+### Snapshot
+
+```
+vboxmanage snapshot "windowsxp" take "snapshot1" --pause
+
+vboxmanage controlvm "windowsxp" poweroff
+
+vboxmanage snapshot "windowsxp" restorecurrent
 ```

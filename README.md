@@ -3,13 +3,125 @@ Cuckoo Sandbox Installation Guide
 
 ## Requirements installation
 
-### Libraries
+### System clean, update, upgrade
+
 ```
-sudo apt install 
-python python-pip python-dev libffi-dev libssl-dev
-python-virtualenv python-setuptools
-libjpeg-dev zlib1g-dev swig
-mongodb
+sudo apt update
+sudo apt upgrade
+sudo apt dist-upgrade
+sudo apt autoremove
+sudo apt autoclean
+sudo apt clean
+sudo apt update
+
+sudo apt install python python-dev
+sudo apt install libjpeg-dev zlib1g-dev swig
+
+wget -qO- https://bootstrap.pypa.io/get-pip.py | python - --user
+
+pip check
+
+pip install enum34 six --user
+pip install virtualenv --user
+
+virtualenv cuckoo_venv
+. cuckoo_venv/bin/activate
+
+sudo apt install mongodb
+
+#mkdir yara
+#wget -qO- https://github.com/plusvic/yara/archive/v3.4.0.tar.gz | tar -zxf - -C yara --strip-components 1
+
+git clone https://github.com/plusvic/yara
+
+cd yara/
+
+sudo apt install automake libtool make gcc
+
+sudo apt install libssl1.0-dev libjansson-dev libmagic-dev
+
+./bootstrap.sh
+
+./configure --prefix=$HOME/.local/ --with-crypto --enable-cuckoo --enable-magic
+./configure --prefix=$HOME/cuckoo-2.0.5_venv/local --with-crypto --enable-cuckoo --enable-magic
+
+make && make check
+make install
+
+yara -v
+
+cd ..
+
+mkdir ssdeep
+wget -qO- https://github.com/ssdeep-project/ssdeep/archive/release-2.14.1.tar.gz | tar -zxf - -C ssdeep --strip-components 1
+
+cd ssdeep
+
+./bootstrap && ./configure --prefix=$HOME/.local/
+
+make && make check
+make install
+
+ssdeep -V
+
+cd ..
+
+git clone https://github.com/bunzen/pySSDeep.git
+cd pySSDeep
+python setup.py build
+python setup.py install
+cd ..
+
+git clone --recursive https://github.com/kbandla/pydeep.git
+
+cd pydeep
+
+python setup.py build
+python setup.py test
+python setup.py install
+
+pip show pydeep
+
+cd ..
+
+sudo apt install mitmproxy
+
+sudo apt install tcpdump apparmor-utils
+sudo aa-disable /usr/sbin/tcpdump
+sudo setcap cap_net_raw,cap_net_admin=eip /usr/sbin/tcpdump
+sudo getcap /usr/sbin/tcpdump
+
+pip install distorm3
+pip install pycrypto
+pip install pillow
+pip install openpyxl
+pip install ujson
+
+pip install pytz
+
+git clone https://github.com/volatilityfoundation/volatility.git
+
+cd volatility/
+
+python setup.py build
+python setup.py install
+
+vol.py -h
+
+cd ..
+
+sudo apt install swig
+
+pip install m2crypto
+pip install cuckoo
+pip install cuckoo==2.0.5
+
+```
+
+### Libraries
+
+```
+sudo apt install python python-pip python-dev libffi-dev libssl-dev python-virtualenv python-setuptools libjpeg-dev zlib1g-dev swig mongodb
 #postgresql libpq-dev
 qemu-kvm libvirt-bin ubuntu-vm-builder bridge-utils python-libvirt
 XenAPI
@@ -21,7 +133,7 @@ python-pil python-sqlalchemy
 ```
 
 ```
-python-django python-bson python-dpkt python-jinja2 python-magic python-pymongo python-gridfs python-bottle python-pefile python-chardet tcpdump -y
+python-django python-bson python-dpkt python-jinja2 python-magic python-pymongo python-gridfs python-bottle python-pefile python-chardet tcpdump
 ```
 
 ### Yara
@@ -39,7 +151,7 @@ wget -qO- https://github.com/VirusTotal/yara/archive/v3.7.1.tar.gz | tar -zxf - 
 cd yara
 ./bootstrap.sh
 
-./configure  --prefix=$HOME/.local/ --with-crypto --enable-cuckoo --enable-magic
+./configure --prefix=$HOME/.local/ --with-crypto --enable-cuckoo --enable-magic
 
 make && make check
 make install
@@ -107,7 +219,9 @@ cd ..
 ### mitmproxy
 
 ```
-wget -qO- https://snapshots.mitmproxy.org/4.0.3/mitmproxy-4.0.3-linux.tar.gz | tar -zxf - -C mitmproxy --strip-components 1
+sudo apt install mitmproxy
+mitmproxy + ctrl-c
+cp $HOME/.mitmproxy/mitmproxy-ca-cert.p12 $HOME/.cuckoo/analyzer/windows/bin/cert.p12
 ```
 
 ### tcpdump
@@ -128,7 +242,7 @@ getcap /usr/sbin/tcpdump
 ```
 sudo apt install swig
 
-pip install m2crypto
+pip install m2crypto --user
 #pip install m2crypto==0.24.0
 ```
 
@@ -151,11 +265,11 @@ Volatility is an optional tool to do forensic analysis on memory dumps. In combi
 ```
 sudo apt install pcregrep libpcre++-dev python-dev
 
-pip install distorm3
+pip install distorm3 --user
 pip install pycrypto
 pip install pillow
-pip install openpyxl
-pip install ujson
+pip install openpyxl --user
+pip install ujson --user
 
 pip install pytz
 
@@ -235,6 +349,7 @@ virtualbox.conf
 
 ```
 sudo iptables -t nat -A POSTROUTING -o enp3s0 -s 192.168.56.0/24 -j MASQUERADE
+sudo iptables -t nat -A POSTROUTING -o wlp4s0 -s 192.168.56.0/24 -j MASQUERADE
 
 # Default drop.
 sudo iptables -P FORWARD DROP
@@ -270,7 +385,7 @@ sudo apt install uml-utilities bridge-utils
 ### OS
 
 ```
-Windows 7 SP1 Professional
+Windows 7 SP1 64-bit
 
 ```
 
@@ -298,9 +413,34 @@ Change network settings (Static IP address and private DNS server)
 ### Snapshot
 
 ```
-vboxmanage snapshot "windowsxp" take "snapshot1" --pause
+VBoxManage snapshot "cuckoo1" take "cuckoo1" --pause
 
-vboxmanage controlvm "windowsxp" poweroff
+VBoxManage controlvm "cuckoo1" poweroff
+VBoxManage snapshot "cuckoo1" restorecurrent
+```
 
-vboxmanage snapshot "windowsxp" restorecurrent
+## Moloch
+
+Moloch is an open source, large scale, full packet capturing, indexing, and database system. Moloch augments your current security infrastructure to store and index network traffic in standard PCAP format, providing fast, indexed access.
+
+### ElasticSearch
+
+```
+sudo apt install default-jre curl
+
+sudo systemctl start elasticsearch.service
+
+curl -X PUT -d @'/home/cuckoo/.cuckoo/elasticsearch/template.json' 'http://localhost:9200/_template/cuckoo'
+
+```
+
+```
+sudo apt install ethtool libyaml-dev 
+
+wget https://files.molo.ch/builds/ubuntu-16.04/moloch_1.1.1-1_amd64.deb
+
+sudo dpkg -i moloch_1.1.1-1_amd64.deb
+
+sudo /data/moloch/db/db.pl http://localhost:9200 init
+sudo /data/moloch/bin/moloch_add_user.sh cuckoo cuckoo cuckoosandbox --admin
 ```

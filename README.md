@@ -13,10 +13,19 @@ sudo apt autoremove
 sudo apt autoclean
 sudo apt clean
 sudo apt update
+```
 
+### Libraries
+
+```
 sudo apt install python python-dev
+sudo apt install libffi-dev libssl-dev
 sudo apt install libjpeg-dev zlib1g-dev swig
+```
 
+### Local user pip
+
+```
 wget -qO- https://bootstrap.pypa.io/get-pip.py | python - --user
 
 pip check
@@ -24,139 +33,38 @@ pip check
 pip install enum34 six --user
 pip install virtualenv --user
 
+cd $HOME
+
 virtualenv cuckoo_venv
 . cuckoo_venv/bin/activate
 
 sudo apt install mongodb
-
-#mkdir yara
-#wget -qO- https://github.com/plusvic/yara/archive/v3.4.0.tar.gz | tar -zxf - -C yara --strip-components 1
-
-git clone https://github.com/plusvic/yara
-
-cd yara/
-
-sudo apt install automake libtool make gcc
-
-sudo apt install libssl1.0-dev libjansson-dev libmagic-dev
-
-./bootstrap.sh
-
-./configure --prefix=$HOME/.local/ --with-crypto --enable-cuckoo --enable-magic
-./configure --prefix=$HOME/cuckoo-2.0.5_venv/local --with-crypto --enable-cuckoo --enable-magic
-
-make && make check
-make install
-
-yara -v
-
-cd ..
-
-mkdir ssdeep
-wget -qO- https://github.com/ssdeep-project/ssdeep/archive/release-2.14.1.tar.gz | tar -zxf - -C ssdeep --strip-components 1
-
-cd ssdeep
-
-./bootstrap && ./configure --prefix=$HOME/.local/
-
-make && make check
-make install
-
-ssdeep -V
-
-cd ..
-
-git clone https://github.com/bunzen/pySSDeep.git
-cd pySSDeep
-python setup.py build
-python setup.py install
-cd ..
-
-git clone --recursive https://github.com/kbandla/pydeep.git
-
-cd pydeep
-
-python setup.py build
-python setup.py test
-python setup.py install
-
-pip show pydeep
-
-cd ..
-
-sudo apt install mitmproxy
-
-sudo apt install tcpdump apparmor-utils
-sudo aa-disable /usr/sbin/tcpdump
-sudo setcap cap_net_raw,cap_net_admin=eip /usr/sbin/tcpdump
-sudo getcap /usr/sbin/tcpdump
-
-pip install distorm3
-pip install pycrypto
-pip install pillow
-pip install openpyxl
-pip install ujson
-
-pip install pytz
-
-git clone https://github.com/volatilityfoundation/volatility.git
-
-cd volatility/
-
-python setup.py build
-python setup.py install
-
-vol.py -h
-
-cd ..
-
-sudo apt install swig
-
-pip install m2crypto
-pip install cuckoo
-pip install cuckoo==2.0.5
-
-```
-
-### Libraries
-
-```
-sudo apt install python python-pip python-dev libffi-dev libssl-dev python-virtualenv python-setuptools libjpeg-dev zlib1g-dev swig mongodb
-#postgresql libpq-dev
-qemu-kvm libvirt-bin ubuntu-vm-builder bridge-utils python-libvirt
-XenAPI
-```
-
-```
-git build-essential
-python-pil python-sqlalchemy
-```
-
-```
-python-django python-bson python-dpkt python-jinja2 python-magic python-pymongo python-gridfs python-bottle python-pefile python-chardet tcpdump
 ```
 
 ### Yara
 
 ```
-sudo apt install automake libtool make gcc
-sudo apt install libssl-dev
-sudo apt install libjansson-dev
-sudo apt install libmagic-dev
-
 mkdir yara
 
 wget -qO- https://github.com/VirusTotal/yara/archive/v3.7.1.tar.gz | tar -zxf - -C yara --strip-components 1
 
-cd yara
+cd yara/
+
+sudo apt install automake libtool make gcc
+sudo apt install flex bison
+sudo apt install libssl1.0-dev libjansson-dev libmagic-dev
+
 ./bootstrap.sh
 
 ./configure --prefix=$HOME/.local/ --with-crypto --enable-cuckoo --enable-magic
+./configure --prefix=$HOME/cuckoo_venv/local/ --with-crypto --enable-cuckoo --enable-magic
 
 make && make check
 make install
 
 yara -v
+
+cd ..
 ```
 
 #### yara-python
@@ -167,7 +75,7 @@ yara -v
 git clone --recursive https://github.com/VirusTotal/yara-python
 cd yara-python
 python setup.py build
-python setup.py install --user
+python setup.py install
 
 #python setup.py install --dynamic-linking
 
@@ -186,7 +94,10 @@ wget -qO- https://github.com/ssdeep-project/ssdeep/archive/release-2.14.1.tar.gz
 
 cd ssdeep
 
-./bootstrap && ./configure --prefix=$HOME/.local/
+./bootstrap
+
+./configure --prefix=$HOME/.local/
+./configure --prefix=$HOME/cuckoo_venv/local/
 
 make && make check
 make install
@@ -194,12 +105,18 @@ make install
 ssdeep -V
 
 cd ..
+
+git clone https://github.com/bunzen/pySSDeep.git
+cd pySSDeep
+python setup.py build
+python setup.py install
+cd ..
 ```
 
 #### pydeep
 
 ```
-sudo apt install libfuzzy-dev
+#sudo apt install libfuzzy-dev
 
 #pip install pydeep
 
@@ -209,7 +126,7 @@ cd pydeep
 
 python setup.py build
 python setup.py test
-python setup.py install --user
+python setup.py install
 
 pip show pydeep
 
@@ -220,8 +137,6 @@ cd ..
 
 ```
 sudo apt install mitmproxy
-mitmproxy + ctrl-c
-cp $HOME/.mitmproxy/mitmproxy-ca-cert.p12 $HOME/.cuckoo/analyzer/windows/bin/cert.p12
 ```
 
 ### tcpdump
@@ -230,8 +145,7 @@ cp $HOME/.mitmproxy/mitmproxy-ca-cert.p12 $HOME/.cuckoo/analyzer/windows/bin/cer
 sudo apt install tcpdump apparmor-utils
 sudo aa-disable /usr/sbin/tcpdump
 sudo setcap cap_net_raw,cap_net_admin=eip /usr/sbin/tcpdump
-
-getcap /usr/sbin/tcpdump
+sudo getcap /usr/sbin/tcpdump
 
 #sudo apt install libcap2-bin
 #sudo chmod +s /usr/sbin/tcpdump
@@ -242,8 +156,7 @@ getcap /usr/sbin/tcpdump
 ```
 sudo apt install swig
 
-pip install m2crypto --user
-#pip install m2crypto==0.24.0
+pip install m2crypto
 ```
 
 ### WeasyPrint
@@ -265,25 +178,37 @@ Volatility is an optional tool to do forensic analysis on memory dumps. In combi
 ```
 sudo apt install pcregrep libpcre++-dev python-dev
 
-pip install distorm3 --user
+pip install distorm3
 pip install pycrypto
 pip install pillow
-pip install openpyxl --user
-pip install ujson --user
+pip install openpyxl
+pip install ujson
 
 pip install pytz
 
-
 git clone https://github.com/volatilityfoundation/volatility.git
 
-cd volatility
+cd volatility/
 
 python setup.py build
-python setup.py install --user
+python setup.py install
 
-python vol.py -h
+vol.py -h
 
 cd ..
+```
+
+## Cuckoo installation
+
+```
+pip install cuckoo
+
+cuckoo -d
+cuckoo community
+
+mitmproxy + ctrl-c
+
+cp $HOME/.mitmproxy/mitmproxy-ca-cert.p12 $HOME/.cuckoo/analyzer/windows/bin/cert.p12
 ```
 
 ## Virtualbox
@@ -291,27 +216,20 @@ cd ..
 ### apt
 
 ```
-sudo apt install virtualbox virtualbox-ext-pack
+#sudo apt install virtualbox virtualbox-ext-pack
 ```
 
 ### Manual
 ```
-sudo add-apt-repository "https://download.virtualbox.org/virtualbox/debian bionic contrib"
+#sudo add-apt-repository "https://download.virtualbox.org/virtualbox/debian bionic contrib"
 
-wget -q https://www.virtualbox.org/download/oracle_vbox_2016.asc -O- | sudo apt-key add -
-wget -q https://www.virtualbox.org/download/oracle_vbox.asc -O- | sudo apt-key add -
+echo "deb https://download.virtualbox.org/virtualbox/debian stretch contrib
+" | sudo tee /etc/apt/sources.list.d/virtualbox.list
+
+wget -qO- https://www.virtualbox.org/download/oracle_vbox_2016.asc | sudo apt-key add -
 
 sudo apt update
 sudo apt install virtualbox-5.2
-```
-
-## Cuckoo installation
-
-```
-virtualenv venv
-. venv/bin/activate
-pip install -U pip setuptools
-pip install -U cuckoo
 ```
 
 ## Cuckoo Configurations
@@ -443,4 +361,23 @@ sudo dpkg -i moloch_1.1.1-1_amd64.deb
 
 sudo /data/moloch/db/db.pl http://localhost:9200 init
 sudo /data/moloch/bin/moloch_add_user.sh cuckoo cuckoo cuckoosandbox --admin
+```
+
+## Optional modules
+
+```
+Suricata — IDS
+Snort — IDS
+HoneyD — Honeypot
+InetSim
+Tor
+Teserract
+MitMproxy
+Moloch
+SSDeep — Fuzzy-Hashing
+Volatility
+Distorm3
+Yara
+IRMA
+TheHive Project
 ```

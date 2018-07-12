@@ -381,3 +381,56 @@ Yara
 IRMA
 TheHive Project
 ```
+
+## honeyd
+
+```
+sudo apt install libevent-dev libdumbnet-dev libpcap-dev libpcre3-dev libedit-dev bison flex libtool automake
+
+git clone https://github.com/DataSoft/Honeyd.git
+
+cd Honeyd
+
+./autogen.sh
+./configure --prefix=$HOME/cuckoo_venv/local/
+make
+make install
+```
+
+$HOME/cuckoo_venv/local/share/honeyd/config.conf
+
+```
+create default
+set default default tcp action filtered
+set default default udp action filtered
+set default default icmp action filtered
+
+create windows
+set windows personality "Microsoft Windows XP Professional SP3"
+set windows uptime 1728650
+set windows maxfds 35
+set windows default tcp action reset
+add windows tcp port 135 open
+add windows tcp port 139 open
+add windows tcp port 445 open
+set windows ethernet "08:00:27:81:1d:0c"
+bind 192.168.56.103 windows
+```
+
+## INetSim
+
+```
+echo "deb http://www.inetsim.org/debian/ binary/" | sudo tee /etc/apt/sources.list.d/inetsim.list
+
+wget -qO- http://www.inetsim.org/inetsim-archive-signing-key.asc | sudo apt-key add -
+
+sudo apt update
+sudo apt install inetsim
+```
+
+## Cuckoo auto-startup
+
+```
+sudo apt install supervisor -y
+sudo systemctl stop supervisor
+```

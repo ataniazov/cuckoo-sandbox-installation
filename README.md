@@ -50,7 +50,7 @@ wget -qO- https://github.com/VirusTotal/yara/archive/v3.7.1.tar.gz | tar -zxf - 
 
 cd yara/
 
-sudo apt install automake libtool make gcc
+sudo apt install automake libtool make gcc build-essential
 sudo apt install flex bison
 sudo apt install libssl1.0-dev libjansson-dev libmagic-dev
 
@@ -116,7 +116,7 @@ cd ..
 #### pydeep
 
 ```
-#sudo apt install libfuzzy-dev
+sudo apt install libfuzzy-dev
 
 #pip install pydeep
 
@@ -433,4 +433,44 @@ sudo apt install inetsim
 ```
 sudo apt install supervisor -y
 sudo systemctl stop supervisor
+```
+
+## Suricata
+
+### Manual
+
+```
+sudo apt install libpcre3 libpcre3-dbg libpcre3-dev \
+build-essential autoconf automake libtool libpcap-dev libnet1-dev \
+libyaml-0-2 libyaml-dev zlib1g zlib1g-dev libcap-ng-dev libcap-ng0 \
+make libmagic-dev libjansson-dev libjansson4 pkg-config
+
+sudo apt-get install libnetfilter-queue-dev libnetfilter-queue1 libnfnetlink-dev libnfnetlink0
+
+#IPS
+./configure --enable-nfqueue --prefix=$HOME/.local/ --sysconfdir=/etc --localstatedir=/var
+
+#IDS
+./configure --prefix=$HOME/.local/ --sysconfdir=/etc --localstatedir=/var
+
+make
+make install
+
+```
+
+### ppa
+
+```
+sudo add-apt-repository ppa:oisf/suricata-stable
+sudo apt-get update
+sudo apt-get install suricata
+```
+
+## Snort
+
+```
+sudo apt install snort
+
+sudo chown -R cuckoo:cuckoo /etc/snort/
+sudo chown -R cuckoo:cuckoo /var/log/snort/
 ```
